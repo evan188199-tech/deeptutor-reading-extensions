@@ -1,0 +1,39 @@
+name: Build reading extension wheel
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  wheel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install build
+      - run: python -m build --wheel
+      - name: Verify tag and wheel
+        run: |
+          python - <<'PY'
+          import os, pathlib, tomllib, zipfile
+          version = tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"]
+          ref = os.environ["GITHUB_REF"]
+          if ref.startswith("refs/tags/"):
+              assert ref == "refs/tags/v" + version
+          wheel = list(pathlib.Path("dist").glob("*-py3-none-any.whl"))
+          assert len(wheel) == 1
+          with zipfile.ZipFile(wheel[0]) as archive:
+              assert any(name.endswith("/entry_points.txt") for name in archive.namelist())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reading-wheel
+          path: dist/*.whl
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/*.whl --generate-notes
