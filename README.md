@@ -72,3 +72,11 @@ deeptutor plugin reading remove deeptutor-reading-dictionary-example
 ```
 
 Third-party developers can upload a compatible wheel; automatic online downloads are restricted to this repository's published packages. See the [provider contract and plugin roadmap](docs/PLUGIN_DESIGN.md).
+
+## v0.2.1: reading-session model selection
+
+Vocabulary and quiz providers now use the model selected in the reading conversation. Update both the host from [DeepTutor PR #1233](https://github.com/HKUDS/DeepTutor/pull/1233) and the selected provider packages, then restart the backend. A wheel update alone cannot fix host selection handling or error feedback. Read aloud and the offline dictionary example do not require a model.
+
+The host checks account model grants, reports missing configuration separately from provider errors, and permits retry after an asynchronous timeout. A synchronous provider still running after timeout must finish before another action can start.
+
+This patch has automated regression coverage. Real learner EPUB/PDF/text acceptance is still pending; the management preview above is not evidence of a successful reading action.
