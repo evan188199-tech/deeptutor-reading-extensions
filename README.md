@@ -7,6 +7,15 @@ Requires DeepTutor 1.6.4 or later (before 2.0), Python 3.11–3.14,
 and Reading protocol 1. The managed installer requires the host integration
 in HKUDS/DeepTutor PR #1233 (or a release containing it).
 
+## Preview
+
+Actual local deployment on port 3782. Three independent providers are selected;
+the dictionary example is installed as an optional alternative.
+
+![Independent reading providers and per-package uninstall controls](docs/images/independent-providers.png)
+
+See [local Docker deployment and rollback](docs/LOCAL_DEPLOYMENT.md).
+
 ## Install
 
 Download the versioned wheel from this repository's Releases.
