@@ -40,3 +40,26 @@ python -m build --wheel
 The implementation originates from HKUDS/DeepTutor and retains its Apache-2.0
 license. The package uses the host's verified ReadingContext and LLM services.
 It does not bundle provider credentials or material data.
+
+## Independent installation (v0.2.0)
+
+Requires the provider-management version of host PR #1233. Existing hosts need a one-time frontend/backend upgrade; installing a wheel alone does not add the management page.
+
+| Wheel | Contents |
+| --- | --- |
+| `deeptutor_reading_extensions` | Convenient bundle of all three actions |
+| `deeptutor_reading_read_aloud` | Read aloud only |
+| `deeptutor_reading_vocabulary` | Context-grounded vocabulary only |
+| `deeptutor_reading_quiz` | Quiz only |
+| `deeptutor_reading_dictionary_example` | Three-entry offline dictionary example |
+
+Open **Settings → Reading extensions**, trust the publisher, download an individual provider, then choose it in the action's provider selector. Restart the backend. You can install competing dictionaries and select one without uninstalling the others. Uninstalling one provider does not uninstall other packages.
+
+```sh
+deeptutor plugin reading update --package deeptutor-reading-dictionary-example
+deeptutor plugin reading provider vocabulary --package deeptutor-reading-dictionary-example
+# Restart the backend before using the selected provider.
+deeptutor plugin reading remove deeptutor-reading-dictionary-example
+```
+
+Third-party developers can upload a compatible wheel; automatic online downloads are restricted to this repository's published packages. See the [provider contract and plugin roadmap](docs/PLUGIN_DESIGN.md).
