@@ -43,3 +43,9 @@ Avoid exposing arbitrary file paths, browser scripts, shell execution or provide
 - [pluggy discovery](https://pluggy.readthedocs.io/en/stable/): discover installed providers through Python entry points. DeepTutor retains entry-point discovery and uses explicit selection to resolve competing providers.
 
 These are architectural references, not runtime dependencies. We do not claim compatibility with their plugin packages.
+
+## Reading-session models (v0.2.1)
+
+Providers that call the host LLM should declare `requires_llm=True` in their `ReadingExtensionManifest`. The updated host validates the reading conversation's selected model against account grants and activates its configuration for the action, including synchronous worker calls. Use the host's `complete()` inside that scope; do not replace it with `task_llm_scope()`.
+
+Leave `requires_llm=False` for offline dictionaries and browser speech. They remain usable when no model is configured. Providers should raise failures instead of returning a success-shaped error card: the host distinguishes invalid output from provider failures and attaches a safe request identifier. Async timeout cancellation must be allowed to propagate; synchronous work cannot be forcibly stopped and blocks another call until it finishes.
